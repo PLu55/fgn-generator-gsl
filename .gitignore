@@ -1,0 +1,10 @@
+
+*.o
+
+*.cdeps
+
+*.so
+
+*.a
+
+fgntest

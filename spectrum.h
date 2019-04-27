@@ -5,8 +5,7 @@
 /*  ton@cwi.nl                                                              */
 
 
-void 	FGN_spectrum ( double *pow_spec, int size, double H);
-double 	FGN_B_est (double lambda, double H);
-double 	FGN_B_est_adj (double lambda, double H);
+void 	fgn_spectrum ( double *pow_spec, int size, double H);
+
 
 

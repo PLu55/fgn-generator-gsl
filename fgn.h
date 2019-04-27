@@ -7,11 +7,12 @@
 /*  Modified to be used with GSL (instead of Netlib libraries) by           */
 /*  Aleksejus Kononovicius                                                  */
 
-#include <math.h>
-#include <gsl/gsl_errno.h>
-#include <gsl/gsl_rng.h>
-#include <gsl/gsl_randist.h>
-#include <gsl/gsl_fft_complex.h>
-#include "spectrum.h"
+/*  Modified  by                                                            */
+/*  Peter Lundén p@apal.se                                                  */
 
-extern void apprcirc(long n, double H, double L, long seed, double *output);
+typedef struct fgn_plan_S fgn_plan;
+
+extern void fgn(fgn_plan* plan, double L, double *output);
+extern void fbm(fgn_plan* plan, double L, double *output);
+extern void fgn_make_plan(int n, long seed, double H, fgn_plan** plan);
+extern void fgn_free(fgn_plan* plan);

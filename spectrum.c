@@ -52,10 +52,12 @@ modify it, etc., provided you abide by the terms above.
 ***************************************************************************/
 
 #include <math.h>
-#include "spectrum.h"
+//#include "fgn.h"
 
+double 	fgn_B_est (double lambda, double H);
+double 	fgn_B_est_adj (double lambda, double H);
 
-void FGN_spectrum ( double *pow_spec, int n, double H) {
+void fgn_spectrum ( double *pow_spec, int n, double H) {
   /* Returns an approximation of the power spectrum for fractional      */
   /* Gaussian noise at the given frequencies lambda and the given Hurst */
   /* parameter H.                                                       */
@@ -71,13 +73,13 @@ void FGN_spectrum ( double *pow_spec, int n, double H) {
     lambda = (M_PI * i) / n;
     a = fact1 * (1.0 - cos(lambda));
     b = pow(lambda,(-2.0 * H - 1.0));
-    c = FGN_B_est_adj(lambda, H);
+    c = fgn_B_est_adj(lambda, H);
     pow_spec[i] = a * (b + c); 
   }
 }
 
 
-double FGN_B_est (double lambda, double H) {
+double fgn_B_est (double lambda, double H) {
   /* Returns the estimate for B(lambda,H). */
   int k;
   double d, dprime, sum1,sum2,result;
@@ -106,8 +108,8 @@ double FGN_B_est (double lambda, double H) {
 }
 
 
-double FGN_B_est_adj (double lambda, double H) {
+double fgn_B_est_adj (double lambda, double H) {
   /* Returns the adjusted estimate for B(lambda,H). */
   return (1.0002 - 0.000134 * lambda) * 
-         (FGN_B_est(lambda,H) - pow(2, -7.65*H - 7.4));
+         (fgn_B_est(lambda,H) - pow(2, -7.65*H - 7.4));
 }

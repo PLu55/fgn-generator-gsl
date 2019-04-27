@@ -1,0 +1,93 @@
+# --------------------------------------------------------------------------- #
+# $Id: Makefile.platform 682 2008-06-04 11:51:25Z andersw $
+#
+# This makefile is responsible for deciding platform and setting
+# up basic/general variables, e.g compiler and it's non-specific options.
+# --------------------------------------------------------------------------- #
+
+VISUALC++ := $(shell cl /help /nologo 2> /dev/null | grep -c Microsoft)
+CYGWIN := $(shell gcc --version 2> /dev/null | grep -c cyg)
+MINGW := $(shell gcc --version 2> /dev/null | grep -c mingw)
+
+ifneq ($(VISUALC++), 0)
+UVASBUILDER := "visualc++"
+else
+ifneq ($(CYGWIN), 0)
+UVASBUILDER := "cygwin"
+else
+ifneq ($(MINGW), 0)
+UVASBUILDER := "mingw"
+else
+UVASBUILDER := "linux"
+endif
+endif
+endif
+export UVASBUILDER
+
+# build variables
+ifeq ($(UVASBUILDER), "visualc++")
+
+# create a path that cl is happy with (e.g. without /cygdrive)
+PROJPATH := $(shell cygpath -m $(PROJPATH))
+
+# User defined path variables for required packages
+# Defines LOCALINCPATH and LOCALLIBPATH
+-include Makefile.userdef
+-include ../Makefile.userdef # Ugly hack used when coming from uvsrp
+-include ../../Makefile.userdef # Ugly hack used when coming from uvsrp/test
+
+MAKE := make
+CC := cl
+CINCS = /I$(PROJPATH) /I$(LOCALINCPATH)
+COPT = /nologo /Zi /Od
+CFLAGS = -D_MSVC $(COPT) $(CINCS)
+
+CXX := cl
+CXXINCS = $(CINCS)
+CXXOPT = $(COPT)
+CXXFLAGS = -D_MSVC $(CXXOPT) $(CXXINCS)
+
+OBJ_SUFFIX = .obj
+OBJOUT := /Fo
+BIN_SUFFIX = .exe
+LIB_SUFFIX = .lib
+EXEOUT := /Fe
+
+AR = lib
+ARCRFLAGS = /OUT:
+RANLIB = @echo
+LD = lib
+LDOUT = /OUT:
+
+else
+
+# path variables
+LOCALINCPATH := /usr/local/include
+LOCALLIBPATH := /usr/local/lib
+LUAINC := /usr/include/lua50
+
+MAKE := make
+CC := gcc
+CINCS = -I$(PROJPATH) -I$(LOCALINCPATH)
+CFLAGS = $(CINCS) -Wimplicit -Wreturn-type -g
+
+CXX := g++
+CXXINCS = $(CINCS) -I$(LUAINC)
+CXXFLAGS = $(CXXINCS) -fexceptions -Wimplicit -Wreturn-type -g $(TMP)
+
+OBJ_SUFFIX := .o
+# NOTE:
+# Need a space after *OUT variable since we've "packed" the rules
+# according to VisualC++'s more denser arg style
+OBJOUT := -o 
+BIN_SUFFIX :=
+LIB_SUFFIX = .a
+EXEOUT := -o 
+
+AR = ar
+ARCRFLAGS = r 
+RANLIB = ranlib
+LD = 
+LDOUT = -o 
+
+endif # build variables
